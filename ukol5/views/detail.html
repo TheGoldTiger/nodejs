@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Document</title>
+  <style>
+      .priority {
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-weight: bold;
+      }
+      .low {
+          background-color: #d1e7dd;
+          color: #0f5132;
+      }
+      .medium {
+          background-color: #fff3cd;
+          color: #856404;
+      }
+      .high {
+          background-color: #f8d7da;
+          color: #721c24;
+      }
+  </style>
+</head>
+<body>
+<a href="/">Todočka</a>
+<hr />
+<h1><%= todo.title %></h1>
+<%
+let priorityLabel;
+if (todo.priority === 0) priorityLabel = 'low';
+else if (todo.priority === 1) priorityLabel = 'medium';
+else if (todo.priority === 2) priorityLabel = 'high';
+%>
+<p>Priority: <span class="priority <%= priorityLabel %>"><%= priorityLabel %></span></p>
+<hr />
+<% if (todo.done) { %>
+<a href="/todos/<%= todo.id %>/toggle">dokončeno</a>
+<a href="/todos/<%= todo.id %>/remove">odebrat</a>
+<% } else { %>
+<a href="/todos/<%= todo.id %>/toggle"> nedokončeno </a>
+<% } %>
+<hr />
+<h2>Upravit todočko</h2>
+<form action="/todos/<%= todo.id %>" method="post">
+  <div>
+    <label>Titulek</label>
+    <input name="title" value="<%= todo.title %>" />
+  </div>
+  <div style="margin-top: 10px;">
+    <label>Priority</label>
+    <select name="priority">
+      <option value="0" <%= todo.priority === 0 ? 'selected' : '' %> >Low</option>
+      <option value="1" <%= todo.priority === 1 ? 'selected' : '' %> >Medium</option>
+      <option value="2" <%= todo.priority === 2 ? 'selected' : '' %> >High</option>
+    </select>
+  </div>
+  <div style="margin-top: 10px;">
+    <button type="submit">Uložit</button>
+  </div>
+</form>
+</body>
+</html>

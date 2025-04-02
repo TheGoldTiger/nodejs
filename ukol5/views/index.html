@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Document</title>
+  <style>
+      .priority {
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-weight: bold;
+      }
+
+      .low {
+          background-color: #d1e7dd;
+          color: #0f5132;
+      }
+
+      .medium {
+          background-color: #fff3cd;
+          color: #856404;
+      }
+
+      .high {
+          background-color: #f8d7da;
+          color: #721c24;
+      }
+  </style>
+</head>
+<body>
+<h1><%= title.toUpperCase() %></h1>
+
+<ul>
+  <% for (const todo of todos) { %>
+  <li>
+    <a href="/todos/<%= todo.id %>">
+      <%= todo.title %>
+    </a>
+    <%
+    let priorityLabel;
+    if (todo.priority === 0) priorityLabel = 'low';
+    else if (todo.priority === 1) priorityLabel = 'medium';
+    else if (todo.priority === 2) priorityLabel = 'high';
+    %>
+    - <span class="priority <%= priorityLabel %>">
+            <%= priorityLabel %>
+          </span>
+    - <% if (todo.done) { %>
+    <a href="/todos/<%= todo.id %>/toggle">dokončeno</a>
+    <a href="/todos/<%= todo.id %>/remove">odebrat</a>
+    <% } else { %>
+    <a href="/todos/<%= todo.id %>/toggle">
+      nedokončeno
+    </a>
+    <% } %>
+  </li>
+  <% } %>
+</ul>
+
+<form method="post" action="/todos">
+  <input name="title" placeholder="Titulek" />
+  <select name="priority">
+    <option value="0">Low</option>
+    <option value="1" selected>Medium</option>
+    <option value="2">High</option>
+  </select>
+  <button type="submit">Přidat todo</button>
+</form>
+</body>
+</html>
