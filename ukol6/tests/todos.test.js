@@ -1,6 +1,6 @@
 import test from "ava"
 import { migrate } from "drizzle-orm/libsql/migrator"
-import { db, getTodoById, getAllTodos } from "../src/db.js"
+import { db, getTodoById, getAllTodos, deleteTodo } from "../src/db.js"
 import { todosTable } from "../src/schema.js"
 
 test.before("run migrations", async () => {
@@ -42,4 +42,76 @@ test("getAllTodos returns all todos", async (t) => {
   t.is(sortedTodos[1].id, 2)
   t.is(sortedTodos[1].title, "druhý todo")
   t.is(sortedTodos[1].done, true)
+})
+
+
+test("createTodo creates a new todo", async (t) => {
+  await db.delete(todosTable)
+
+  await db
+      .insert(todosTable)
+      .values({title: "nový úkol", done: false })
+
+  const todos = await getAllTodos()
+
+  t.is(todos.length, 1)
+  t.is(todos[0].title, "nový úkol")
+  t.is(todos[0].done, false)
+})
+
+test("updateTodo updates an existing todo", async (t) => {
+
+  await db.delete(todosTable)
+
+  await db
+      .insert(todosTable)
+      .values({ title: "původní název", done: false })
+
+  await db.update(todosTable).set({
+    title: "aktualizovaný název",
+    priority: "high",
+  })
+
+  const updatedTodo = await getTodoById(1)
+
+  t.is(updatedTodo.title, "aktualizovaný název")
+  t.is(updatedTodo.priority, "high")
+  t.is(updatedTodo.done, false)
+})
+
+test("deleteTodo removes a todo", async (t) => {
+
+  await db.delete(todosTable)
+
+
+  await db
+      .insert(todosTable)
+      .values([
+        { id: 10, title: "todo ke smazání", done: false },
+        { id: 20, title: "ponechaný todo", done: true }
+      ])
+
+  await deleteTodo(10)
+
+  const todos = await getAllTodos()
+
+  t.is(todos.length, 1)
+  t.is(todos[0].id, 20)
+  t.is(todos[0].title, "ponechaný todo")
+})
+
+test("toggleTodo changes the done status", async (t) => {
+  await db
+      .insert(todosTable)
+      .values({ id: 100, title: "přepínací todo", done: false })
+
+  await toggleTodo(100)
+
+  let toggledTodo = await getTodoById(100)
+  t.is(toggledTodo.done, true)
+
+  await toggleTodo(100)
+
+  toggledTodo = await getTodoById(100)
+  t.is(toggledTodo.done, false)
 })
