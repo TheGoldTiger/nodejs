@@ -1,0 +1,13 @@
+<ul>
+  <% for (const todo of todos) { %>
+  <li>
+    <a href="/todos/<%= todo.id %>"> <%= todo.title %> </a>
+    - <% if (todo.done) { %>
+    <a href="/todos/<%= todo.id %>/toggle">dokončeno</a>
+    <a href="/todos/<%= todo.id %>/remove">odebrat</a>
+    <% } else { %>
+    <a href="/todos/<%= todo.id %>/toggle"> nedokončeno </a>
+    <% } %> - <%= todo.priority %>
+  </li>
+  <% } %>
+</ul>
